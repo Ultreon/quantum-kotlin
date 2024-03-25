@@ -5,6 +5,9 @@ import org.jetbrains.gradle.ext.settings
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardOpenOption
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 plugins {
     idea
@@ -13,11 +16,14 @@ plugins {
     id("org.jetbrains.gradle.plugin.idea-ext") version "+"
 }
 
+group = "io.github.ultreon.craftmods"
+version = "0.1.0+snapshot." + DateTimeFormatter.ofPattern("yyyy.MM.dd.HH.mm").format(Instant.now().atOffset(ZoneOffset.UTC))
+
 repositories {
     mavenCentral()
 
     maven {
-        name = "CoreLibsGitHub"
+        name = "UltracraftGitHub"
         url = uri("https://maven.pkg.github.com/Ultreon/ultracraft")
         credentials {
             username = (project.findProperty("gpr.user") ?: System.getenv("USERNAME")) as String
@@ -170,7 +176,7 @@ beforeEvaluate {
 
 publishing {
     publications {
-        create("mavenScala", MavenPublication::class) {
+        create("mavenKotlin", MavenPublication::class) {
             //noinspection GrUnresolvedAccess
             from(components["kotlin"])
         }
@@ -178,7 +184,7 @@ publishing {
 
     repositories {
         maven {
-            name = "CoreLibsGitHub"
+            name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Ultreon/ultracraft-kotlin")
             credentials {
                 username = (project.findProperty("gpr.user") ?: System.getenv("USERNAME")) as String
