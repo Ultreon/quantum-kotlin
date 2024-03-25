@@ -47,10 +47,18 @@ repositories {
     maven("https://maven.fabricmc.net/")
 }
 
+configurations {
+    create("include") {
+        isCanBeResolved = true
+    }
+}
+
 dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 
     implementation("io.github.ultreon.craft:ultracraft-desktop:0.1.0+snapshot.2024.03.24.23.50")
+    
+    configurations["include"](compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")!!)
 }
 
 tasks.test {
@@ -58,6 +66,12 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.jar {
+    from(configurations["include"].map { if (it.isDirectory) it else zipTree(it) })
+
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 fun setupIdea() {
@@ -117,7 +131,7 @@ commonProperties
                         jvmArgs =
                             "-Xmx4g -Dfabric.skipMcProvider=true -Dfabric.dli.config=${launchFile.path} -Dfabric.dli.env=CLIENT -Dfabric.dli.main=net.fabricmc.loader.impl.launch.knot.KnotClient -Dfabric.zipfs.use_temp_file=false"
                         mainClass = "net.fabricmc.devlaunchinjector.Main"
-                        moduleName = idea.module.name + ".api-scala.main"
+                        moduleName = idea.module.name + ".main"
                         workingDirectory = "$projectDir/run/client/main/"
                         programParameters = "--gameDir=."
                         beforeRun {
@@ -133,7 +147,7 @@ commonProperties
                         jvmArgs =
                             "-Xmx4g -Dfabric.skipMcProvider=true -Dfabric.dli.config=${launchFile.path} -Dfabric.dli.env=CLIENT -Dfabric.dli.main=net.fabricmc.loader.impl.launch.knot.KnotClient -Dfabric.zipfs.use_temp_file=false"
                         mainClass = "net.fabricmc.devlaunchinjector.Main"
-                        moduleName = idea.module.name + ".api-scala.main"
+                        moduleName = idea.module.name + ".main"
                         workingDirectory = "$projectDir/run/client/alt/"
                         programParameters = "--gameDir=."
                         beforeRun {
@@ -149,7 +163,7 @@ commonProperties
                         jvmArgs =
                             "-Xmx4g -Dfabric.skipMcProvider=true -Dfabric.dli.config=${launchFile.path} -Dfabric.dli.env=SERVER -Dfabric.dli.main=net.fabricmc.loader.impl.launch.knot.KnotClient -Dfabric.zipfs.use_temp_file=false"
                         mainClass = "net.fabricmc.devlaunchinjector.Main"
-                        moduleName = idea.module.name + ".api-scala.main"
+                        moduleName = idea.module.name + ".main"
                         workingDirectory = "$projectDir/run/server/"
                         programParameters = "--gameDir=."
                         beforeRun {
